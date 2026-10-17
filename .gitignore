@@ -1,0 +1,13 @@
+# Large archieve
+queueflowtmc_flutter/
+queueflowtmc_flutter_LAN_API.zip
+
+#Build files
+.vs/
+bin/
+obj/
+**/bin/
+**/obj/
+
+# IDE files
+.idea/

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ============================================================
+    QUEUEFLOW TMC — NETWORK SECURITY CONFIGURATION
+
+    WHY THIS FILE EXISTS INSTEAD OF android:usesCleartextTraffic="true"
+
+    The manifest used to set `usesCleartextTraffic="true"` on <application>,
+    which switches cleartext HTTP on for EVERY host the app can reach. This app
+    holds a Sanctum bearer token and asks users to type passwords into it, so
+    "every host" is a much bigger permission than the development server needs.
+
+    This file grants cleartext to named development hosts and denies it
+    everywhere else, so a build pointed at a real domain fails loudly at the
+    first request rather than quietly sending a token in the clear.
+
+    MATCHING ON AN IP LITERAL
+
+    Android compares the <domain> value against the URL host as a string, so an
+    IP address matches here in the same way a hostname does. That is what makes
+    it possible to scope the exemption to a DHCP address rather than opening it
+    up for a whole domain.
+
+    TO REBUILD FOR PRODUCTION
+
+    Point the app at an HTTPS API using the API_BASE_URL dart-define, then
+    delete the <domain-config> block below. The base-config already denies
+    cleartext, so HTTPS is the only thing left permitted - which is the point.
+
+    TO REBUILD FOR A DIFFERENT DEVELOPMENT MACHINE
+
+    Add its address as another <domain> in the block below. Do not widen the
+    base-config.
+    ============================================================
+-->
+<network-security-config>
+
+    <!--
+        Default: HTTPS only.
+
+        This is the setting that matters. A host not named below - including
+        any real production domain - gets no cleartext exemption at all.
+    -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+
+    <!--
+        Development only: campus LAN servers and the loopback addresses used
+        while debugging.
+
+        `artisan serve` on a developer machine speaks plain HTTP, and an
+        emulator or a USB-attached device reaches it through these hosts:
+
+          10.34.142.48     the machine running the QueueFlow Laravel server
+                           (current Wi-Fi lease 2026-10-14 on SSID "ced" -
+                           update when it changes; check with `ipconfig`,
+                           then update .env too)
+          192.168.1.154    earlier DHCP lease (kept so older installs keep working)
+          192.168.0.177    earlier DHCP lease (kept so older installs keep working)
+          10.0.2.2         the host machine, as seen from an Android emulator
+          10.0.3.2         the same, from a Genymotion image
+          localhost/127.0.0.1  only reachable via `adb reverse`, i.e. with the
+                          cable attached - never how the app is used normally
+
+        The loopback entries are here for the `adb reverse` debugging workflow
+        only. The shipped app reaches the server over the network with nothing
+        plugged in, which is why a LAN address (or a public HTTPS URL) is the
+        real default in ApiConfig and `localhost` is not.
+    -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">10.34.142.48</domain>
+        <domain includeSubdomains="false">192.168.1.154</domain>
+        <domain includeSubdomains="false">192.168.0.177</domain>
+        <domain includeSubdomains="false">192.168.56.1</domain>
+        <domain includeSubdomains="false">10.0.2.2</domain>
+        <domain includeSubdomains="false">10.0.3.2</domain>
+        <domain includeSubdomains="false">localhost</domain>
+        <domain includeSubdomains="false">127.0.0.1</domain>
+    </domain-config>
+
+</network-security-config>

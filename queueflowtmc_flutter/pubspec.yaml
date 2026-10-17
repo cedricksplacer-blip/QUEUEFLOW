@@ -1,0 +1,89 @@
+name: queueflow_tmc
+description: "Q-FlowTMC — Smart Campus Queue Management."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.12.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  http: ^1.6.0
+  shared_preferences: ^2.5.5
+
+  # Device-level connectivity, used only to tell WiFi / mobile data / none
+  # apart. It says nothing about whether the Laravel server is reachable, so
+  # it is never used on its own to decide the app is online - see
+  # lib/core/network/connectivity_service.dart.
+  connectivity_plus: ^7.0.0
+
+  # Gallery picker for the PWD proof photo. The camera is deliberately never
+  # opened: the request is "Select Image from Gallery" and a photo the student
+  # already has is better evidence than one taken on the spot. The pick is
+  # compressed (quality 80, 1600px) before it leaves the device because the
+  # Laravel side refuses anything over 2 MB.
+  image_picker: ^1.2.4
+  flutter_local_notifications: 22.0.0
+
+  # Documents directory for the digital ticket receipt's "Save image": the
+  # receipt paper is rasterised to a PNG and written under the app's own
+  # folder, so no media-library permission is involved.
+  path_provider: ^2.1.5
+
+  # The bearer token is a credential, so it is sealed in the platform keychain
+  # (Android Keystore / iOS Keychain) instead of the readable preference file.
+  # See SessionStore.
+  flutter_secure_storage: ^11.2.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
+
+  # Direct dev dependency so the connectivity tests can install a fake radio.
+  # Going through the platform interface rather than mocking `Connectivity`
+  # directly is what keeps those tests free of a device or an emulator.
+  connectivity_plus_platform_interface: ^2.1.0
+
+  # Direct dev dependency so the PWD proof tests can replace the system image
+  # picker. The screen builds `ImagePicker()` itself, so a widget test cannot
+  # hand it a fake; swapping the platform instance plays the same trick as
+  # connectivity_plus above, just for a different plugin.
+  image_picker_platform_interface: ^2.11.2
+
+  # Lets the session tests install the package's in-memory stand-in for the
+  # keychain, which has no implementation in a test process.
+  flutter_secure_storage_platform_interface: ^2.1.1
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/I.png"
+  adaptive_icon_background: "#4F46E5"
+  adaptive_icon_foreground_inset: 12
+  min_sdk_android: 21
+  remove_alpha_ios: true
+  web:
+    generate: true
+    image_path: "assets/images/I.png"
+    background_color: "#4F46E5"
+    theme_color: "#4F46E5"
+  windows:
+    generate: true
+    image_path: "assets/images/I.png"
+    icon_color: "#4F46E5"
+  macos:
+    generate: true
+    image_path: "assets/images/I.png"

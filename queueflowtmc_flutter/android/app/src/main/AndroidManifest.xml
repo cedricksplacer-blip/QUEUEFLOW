@@ -1,0 +1,92 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--
+        Internet access. Without this the app cannot open a socket at all, so
+        every request to the Laravel server fails immediately and the
+        connectivity service can only ever report "offline".
+
+        This was already declared here rather than left to the Flutter debug
+        manifest: the debug manifest only adds it for `flutter run`, so a
+        release APK - the one actually installed on a phone - would otherwise
+        have no network access whatsoever.
+    -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <!--
+        Network-state detection, used by connectivity_plus to tell Wi-Fi from
+        mobile data from no connection at all.
+
+        This is a normal permission: it is granted at install time and shows no
+        runtime dialog, so it costs the user nothing. It is declared explicitly
+        even though connectivity_plus ships it in its own manifest, because the
+        app's Level 1 connectivity check is a load-bearing feature rather than
+        a plugin detail, and a merged-manifest change should not be able to
+        break it silently.
+    -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
+    <!--
+        POST_NOTIFICATIONS: Android 13+ runtime permission required before any
+        notification can be shown. The app requests it once (see
+        lib/services/notification_service.dart); without this declaration the
+        request would silently fail.
+
+        VIBRATE: flutter_local_notifications enables vibration on the
+        notification channel; the service that creates the channel owns the
+        vibration behaviour, so the permission is declared explicitly rather
+        than left to the plugin's merged manifest.
+    -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+
+    <!--
+        The app is useful without a network - a cached profile, a cached
+        announcement and a previously fetched ticket all still render - so no
+        <uses-feature android:name="android.hardware.wifi" required="true" /> is
+        declared. Requiring Wi-Fi hardware would exclude devices from the Play
+        Store for a capability the app treats as optional.
+    -->
+
+    <application android:label="Q-FlowTMC"
+        android:name="${applicationName}"
+        android:icon="@mipmap/ic_launcher"
+        android:networkSecurityConfig="@xml/network_security_config">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:taskAffinity=""
+            android:theme="@style/LaunchTheme"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+            android:hardwareAccelerated="true"
+            android:windowSoftInputMode="adjustResize">
+            <!-- Specifies an Android theme to apply to this Activity as soon as
+                 the Android process has started. This theme is visible to the user
+                 while the Flutter UI initializes. After that, this theme continues
+                 to determine the Window background behind the Flutter UI. -->
+            <meta-data
+              android:name="io.flutter.embedding.android.NormalTheme"
+              android:resource="@style/NormalTheme"
+              />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <!-- Don't delete the meta-data below.
+             This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
+        <meta-data
+            android:name="flutterEmbedding"
+            android:value="2" />
+    </application>
+    <!-- Required to query activities that can process text, see:
+         https://developer.android.com/training/package-visibility and
+         https://developer.android.com/reference/android/content/Intent#ACTION_PROCESS_TEXT.
+
+         In particular, this is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin. -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.PROCESS_TEXT"/>
+            <data android:mimeType="text/plain"/>
+        </intent>
+    </queries>
+</manifest>

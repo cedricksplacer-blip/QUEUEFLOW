@@ -1,0 +1,10 @@
+<?php $__env->startSection('title','Add Staff'); ?>
+<?php $__env->startSection('content'); ?>
+<div class="max-w-2xl card p-6"><form method="POST" action="<?php echo e(route('admin.staff.store')); ?>" class="space-y-5"><?php echo csrf_field(); ?>
+<div class="grid md:grid-cols-2 gap-4"><div><label class="block text-sm font-semibold mb-1.5">Full Name</label><input class="input" name="name" value="<?php echo e(old('name')); ?>" required></div><div><label class="block text-sm font-semibold mb-1.5">Email</label><input class="input" type="email" name="email" value="<?php echo e(old('email')); ?>" required></div></div>
+<div class="grid md:grid-cols-2 gap-4"><div><label class="block text-sm font-semibold mb-1.5">Password</label><input class="input" type="password" name="password" required minlength="6"></div><div><label class="block text-sm font-semibold mb-1.5">Phone</label><input class="input" name="phone" value="<?php echo e(old('phone')); ?>"></div></div>
+<div><label class="block text-sm font-semibold mb-1.5">Assigned Office</label><select class="input" name="office_id" required><option value="">Select office</option><?php $__currentLoopData = $offices; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $office): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><option value="<?php echo e($office->id); ?>" <?php if(old('office_id')==$office->id): echo 'selected'; endif; ?>><?php echo e($office->name); ?></option><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?></select></div>
+<div class="flex gap-2"><button class="btn-primary">Create Staff</button><a class="btn-secondary" href="<?php echo e(route('admin.staff.index')); ?>">Cancel</a></div></form></div>
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.admin', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\QUEUEFLOW TMC\QueueFlow_TMC\resources\views/staff/create.blade.php ENDPATH**/ ?>

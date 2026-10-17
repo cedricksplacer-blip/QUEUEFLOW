@@ -1,0 +1,12 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--
+        Debug builds only, and only for the Dart VM service: `flutter run`
+        needs android.permission.INTERNET to attach for hot reload and to
+        set breakpoints.
+
+        Nothing here is used by the app's own code. Release builds inherit
+        src/main/AndroidManifest.xml, which declares no INTERNET permission
+        at all, so a shipped APK cannot open a socket.
+    -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+</manifest>
